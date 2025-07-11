@@ -20,23 +20,23 @@
 ci:
   autoupdate_schedule: monthly
 repos:
-  # General repository health
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-json
-      - id: check-toml
-      - id: check-merge-conflict
-      - id: check-added-large-files
-        args: ['--maxkb=1000']
       - id: check-case-conflict
-      - id: mixed-line-ending
       - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
 
-  # Python code formatting and linting
   - repo: https://github.com/psf/black
     rev: 24.8.0
     hooks:
@@ -72,12 +72,3 @@ repos:
     rev: 0.5.10
     hooks:
       - id: uv-lock
-
-  - repo: local
-    hooks:
-      - id: check-json-schema-meta
-        name: Check JSON Schema references
-        entry: uv run check-json-schema-meta
-        language: system
-        files: \.json$
-        types: [json]
