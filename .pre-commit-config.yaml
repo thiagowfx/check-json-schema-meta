@@ -25,7 +25,7 @@ repos:
       - id: check-hooks-apply
       - id: check-useless-excludes
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b  # frozen: v5.0.0
     hooks:
       - id: check-case-conflict
       - id: check-docstring-first
@@ -38,38 +38,38 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 24.8.0
+    rev: 8a737e727ac5ab2f1d4cf5876720ed276dc8dc4b  # frozen: 25.1.0
     hooks:
       - id: black
         language_version: python3
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: c8ab4a5b21bac924d106e3103dd7c979fdd0f9bc  # frozen: 6.0.1
     hooks:
       - id: isort
         args: ["--profile", "black"]
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+    rev: d93590f5be797aabb60e3b09f2f52dddb02f349f  # frozen: 7.3.0
     hooks:
       - id: flake8
         additional_dependencies: [flake8-docstrings]
         args: ['--max-line-length=88', '--extend-ignore=E203,W503']
 
   - repo: https://github.com/pycqa/bandit
-    rev: 1.7.10
+    rev: 2d0b675b04c80ae42277e10500db06a0a37bae17  # frozen: 1.8.6
     hooks:
       - id: bandit
         args: ['-c', 'pyproject.toml']
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
+    rev: 0f86793af5ef5f6dc63c8d04a3cabfa3ea8f9c6a  # frozen: v1.16.1
     hooks:
       - id: mypy
         additional_dependencies: [types-requests]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.5.10
+    rev: 4b94be130f0326b2abddb9cade8248eb4b0fdadb  # frozen: 0.7.20
     hooks:
       - id: uv-lock
 
