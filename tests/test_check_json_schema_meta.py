@@ -11,7 +11,7 @@ from check_json_schema_meta import main, validate_json_file
 class TestValidateJsonFile:
     """Test the validate_json_file function."""
 
-    def test_valid_json_with_schema(self):
+    def test_valid_json_with_schema(self) -> None:
         """Test validation of a valid JSON file with proper schema."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(
@@ -29,7 +29,7 @@ class TestValidateJsonFile:
 
         assert result is True
 
-    def test_json_without_schema(self):
+    def test_json_without_schema(self) -> None:
         """Test validation of JSON file without $schema key."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump({"name": "test"}, f)
@@ -40,7 +40,7 @@ class TestValidateJsonFile:
 
         assert result is False
 
-    def test_invalid_json(self):
+    def test_invalid_json(self) -> None:
         """Test validation of invalid JSON file."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             f.write("invalid json content")
@@ -51,7 +51,7 @@ class TestValidateJsonFile:
 
         assert result is False
 
-    def test_invalid_schema_reference(self):
+    def test_invalid_schema_reference(self) -> None:
         """Test validation with invalid schema reference."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(
@@ -72,7 +72,7 @@ class TestValidateJsonFile:
 class TestMain:
     """Test the main function."""
 
-    def test_main_with_valid_files(self):
+    def test_main_with_valid_files(self) -> None:
         """Test main function with valid JSON files."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1:
             json.dump(
@@ -91,7 +91,7 @@ class TestMain:
 
         assert result == 0
 
-    def test_main_with_invalid_files(self):
+    def test_main_with_invalid_files(self) -> None:
         """Test main function with invalid JSON files."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1:
             json.dump({"name": "test"}, f1)  # No $schema
@@ -104,14 +104,14 @@ class TestMain:
 
         assert result == 1
 
-    def test_main_with_nonexistent_file(self):
+    def test_main_with_nonexistent_file(self) -> None:
         """Test main function with nonexistent file."""
         with patch("sys.argv", ["check_json_schema_meta", "nonexistent.json"]):
             result = main()
 
         assert result == 1
 
-    def test_main_with_non_json_file(self):
+    def test_main_with_non_json_file(self) -> None:
         """Test main function with non-JSON file."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f1:
             f1.write("not json")
@@ -124,7 +124,7 @@ class TestMain:
 
         assert result == 0  # Should succeed but skip non-JSON files
 
-    def test_main_with_mixed_files(self):
+    def test_main_with_mixed_files(self) -> None:
         """Test main function with mix of valid and invalid files."""
         with (
             tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1,
