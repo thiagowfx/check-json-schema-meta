@@ -26,7 +26,7 @@ def validate_json_file(file_path: Path) -> bool:
 
         schema_ref = data.get("$schema")
         if not schema_ref:
-            print(f"Error: {file_path} does not contain a '$schema' key")
+            print(f"❌ {file_path}: Missing '$schema' key")
             return False
 
         # Load and validate the schema
@@ -38,13 +38,18 @@ def validate_json_file(file_path: Path) -> bool:
         return True
 
     except json.JSONDecodeError as e:
-        print(f"Error: {file_path} is not valid JSON: {e}")
+        print(f"❌ {file_path}: Invalid JSON - {e}")
         return False
     except jsonschema.ValidationError as e:
-        print(f"Error: {file_path} schema validation failed: {e.message}")
+        # Format validation error more clearly
+        if e.absolute_path:
+            path_str = ".".join(str(p) for p in e.absolute_path)
+            print(f"❌ {file_path}: Invalid value at '{path_str}' - {e.message}")
+        else:
+            print(f"❌ {file_path}: Schema validation failed - {e.message}")
         return False
     except Exception as e:
-        print(f"Error: {file_path} failed validation: {e}")
+        print(f"❌ {file_path}: {e}")
         return False
 
 
@@ -67,12 +72,12 @@ def main() -> int:
         path = Path(file_path)
 
         if not path.exists():
-            print(f"Error: File {file_path} does not exist")
+            print(f"❌ {file_path}: File not found")
             validation_results.append(False)
             continue
 
         if path.suffix.lower() != ".json":
-            print(f"Warning: {file_path} is not a JSON file, skipping")
+            print(f"⚠️  {file_path}: Not a JSON file, skipping")
             continue
 
         validation_results.append(validate_json_file(path))
