@@ -10,12 +10,13 @@ import jsonschema
 from check_jsonschema.schema_loader import SchemaLoader
 
 
-def validate_json_file(file_path: Path) -> bool:
+def validate_json_file(file_path: Path, strict: bool = False) -> bool:
     """
     Validate a single JSON file's $schema reference.
 
     Args:
         file_path: Path to the JSON file to validate
+        strict: If True, fail on missing $schema. If False, gracefully skip.
 
     Returns:
         True if validation passes, False otherwise
@@ -26,8 +27,11 @@ def validate_json_file(file_path: Path) -> bool:
 
         schema_ref = data.get("$schema")
         if not schema_ref:
-            print(f"❌ {file_path}: Missing '$schema' key")
-            return False
+            if strict:
+                print(f"❌ {file_path}: Missing '$schema' key")
+                return False
+            else:
+                return True
 
         # Load and validate the schema
         schema_loader = SchemaLoader(schema_ref)
@@ -64,6 +68,11 @@ def main() -> int:
         description="Validate JSON Schema references in JSON files"
     )
     parser.add_argument("files", nargs="+", help="JSON files to validate")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Fail on missing $schema (default: gracefully skip)",
+    )
     args = parser.parse_args()
 
     validation_results = []
@@ -80,7 +89,7 @@ def main() -> int:
             print(f"⚠️  {file_path}: Not a JSON file, skipping")
             continue
 
-        validation_results.append(validate_json_file(path))
+        validation_results.append(validate_json_file(path, args.strict))
 
     return 0 if all(validation_results) else 1
 

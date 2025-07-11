@@ -30,12 +30,34 @@ class TestValidateJsonFile:
         assert result is True
 
     def test_json_without_schema(self) -> None:
-        """Test validation of JSON file without $schema key."""
+        """Test validation of JSON file without $schema key (default behavior)."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump({"name": "test"}, f)
             f.flush()
 
             result = validate_json_file(Path(f.name))
+            Path(f.name).unlink()
+
+        assert result is True  # Default behavior is to gracefully skip
+
+    def test_json_without_schema_non_strict(self) -> None:
+        """Test validation of JSON file without $schema key in non-strict mode."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump({"name": "test"}, f)
+            f.flush()
+
+            result = validate_json_file(Path(f.name), strict=False)
+            Path(f.name).unlink()
+
+        assert result is True
+
+    def test_json_without_schema_strict(self) -> None:
+        """Test validation of JSON file without $schema key in strict mode."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump({"name": "test"}, f)
+            f.flush()
+
+            result = validate_json_file(Path(f.name), strict=True)
             Path(f.name).unlink()
 
         assert result is False
@@ -92,7 +114,7 @@ class TestMain:
         assert result == 0
 
     def test_main_with_invalid_files(self) -> None:
-        """Test main function with invalid JSON files."""
+        """Test main function with invalid JSON files (default behavior)."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1:
             json.dump({"name": "test"}, f1)  # No $schema
             f1.flush()
@@ -102,7 +124,7 @@ class TestMain:
 
             Path(f1.name).unlink()
 
-        assert result == 1
+        assert result == 0  # Default behavior is to gracefully skip
 
     def test_main_with_nonexistent_file(self) -> None:
         """Test main function with nonexistent file."""
@@ -123,6 +145,32 @@ class TestMain:
             Path(f1.name).unlink()
 
         assert result == 0  # Should succeed but skip non-JSON files
+
+    def test_main_with_strict_flag(self) -> None:
+        """Test main function with --strict flag and missing schema."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1:
+            json.dump({"name": "test"}, f1)  # No $schema
+            f1.flush()
+
+            with patch("sys.argv", ["check_json_schema_meta", "--strict", f1.name]):
+                result = main()
+
+            Path(f1.name).unlink()
+
+        assert result == 1  # Should fail with --strict
+
+    def test_main_without_strict_flag(self) -> None:
+        """Test main function without --strict flag and missing schema."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1:
+            json.dump({"name": "test"}, f1)  # No $schema
+            f1.flush()
+
+            with patch("sys.argv", ["check_json_schema_meta", f1.name]):
+                result = main()
+
+            Path(f1.name).unlink()
+
+        assert result == 0  # Should succeed without --strict
 
     def test_main_with_mixed_files(self) -> None:
         """Test main function with mix of valid and invalid files."""
@@ -151,7 +199,7 @@ class TestMain:
             Path(f1.name).unlink()
             Path(f2.name).unlink()
 
-        assert result == 1  # Should fail due to invalid file
+        assert result == 0  # Should succeed in non-strict mode
 
     def test_renovate_json_with_schema(self) -> None:
         """Test validation of renovate.json with proper schema."""
