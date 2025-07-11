@@ -44,5 +44,5 @@ uv run pytest tests/
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.9+
 - check-jsonschema package

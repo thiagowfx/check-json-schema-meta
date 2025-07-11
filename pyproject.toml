@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "check-json-schema-meta"
 version = "0.1.0"
 description = "Pre-commit hook to validate JSON Schema references"
+requires-python = ">=3.9"
 dependencies = [
     "check-jsonschema",
 ]
