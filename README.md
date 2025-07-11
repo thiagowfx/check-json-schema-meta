@@ -2,6 +2,8 @@
 
 A pre-commit hook that validates JSON files contain valid `$schema` references and validates the JSON data against the referenced schema.
 
+> **Note**: This repository serves as a workaround for [python-jsonschema/check-jsonschema#310](https://github.com/python-jsonschema/check-jsonschema/issues/310) - a feature request to add validation of `$schema` references in JSON files.
+
 ## Features
 
 - Validates that JSON files contain a `$schema` key
