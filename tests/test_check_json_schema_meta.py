@@ -152,3 +152,23 @@ class TestMain:
             Path(f2.name).unlink()
 
         assert result == 1  # Should fail due to invalid file
+
+    def test_renovate_json_with_schema(self) -> None:
+        """Test validation of renovate.json with proper schema."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(
+                {
+                    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+                    "extends": ["config:recommended"],
+                    "packageRules": [
+                        {"matchUpdateTypes": ["minor", "patch"], "automerge": True}
+                    ],
+                },
+                f,
+            )
+            f.flush()
+
+            result = validate_json_file(Path(f.name))
+            Path(f.name).unlink()
+
+        assert result is True
