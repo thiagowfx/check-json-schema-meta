@@ -178,7 +178,6 @@ class TestMain:
             tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1,
             tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f2,
         ):
-
             # Valid file
             json.dump(
                 {
