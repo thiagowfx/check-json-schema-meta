@@ -65,7 +65,14 @@ def main() -> int:
         0 on success, 1 on failure
     """
     parser = argparse.ArgumentParser(
-        description="Validate JSON Schema references in JSON files"
+        description="Validate JSON Schema references in JSON files",
+        epilog="""
+Usage examples:
+  %(prog)s file1.json file2.json
+  %(prog)s --strict *.json
+  %(prog)s --help
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("files", nargs="+", help="JSON files to validate")
     parser.add_argument(
