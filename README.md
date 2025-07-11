@@ -31,7 +31,47 @@ A pre-commit hook that validates JSON files contain valid `$schema` references a
 
 ## Usage
 
-Direct usage:
+### Pre-commit Hook Usage
+
+One-shot preview (trial):
+
+```shell
+pre-commit try-repo https://github.com/thiagowfx/check-json-schema-meta check-json-schema-meta --all
+```
+
+Basic configuration in `.pre-commit-config.yaml`:
+
+```yaml
+repos:
+  - repo: https://github.com/thiagowfx/check-json-schema-meta
+    rev: main  replace with the latest tag
+    hooks:
+      - id: check-json-schema-meta
+```
+
+With strict mode enabled:
+
+```yaml
+repos:
+  - repo: https://github.com/thiagowfx/check-json-schema-meta
+    rev: main  replace with the latest tag
+    hooks:
+      - id: check-json-schema-meta
+        args: ['--strict']
+```
+
+Run pre-commit hooks:
+
+```bash
+# Install pre-commit hooks
+pre-commit install
+
+# Run only this specific hook
+pre-commit run [--all-files] check-json-schema-meta
+```
+
+### Direct Usage
+
 ```bash
 # Default behavior - gracefully skip files without $schema
 uv run check-json-schema-meta file1.json file2.json
