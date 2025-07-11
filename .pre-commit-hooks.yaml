@@ -1,0 +1,8 @@
+---
+- id: check-json-schema-meta
+  name: Check JSON Schema references
+  description: Validate that JSON files contain valid $schema references
+  entry: check-json-schema-meta
+  language: python
+  types:
+    - json
