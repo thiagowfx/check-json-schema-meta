@@ -22,7 +22,7 @@ A pre-commit hook that validates JSON files contain valid `$schema` references a
 2. Add to your `.pre-commit-config.yaml`:
    ```yaml
    repos:
-     - repo: /path/to/check-json-schema-meta
+     - repo: https://github.com/thiagowfx/check-json-schema-meta
        rev: main
        hooks:
          - id: check-json-schema-meta
