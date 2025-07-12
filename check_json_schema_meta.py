@@ -108,7 +108,8 @@ Usage examples:
             with open(path, "r", encoding="utf-8") as f:
                 json.load(f)
         except json.JSONDecodeError:
-            print(f"⚠️  {file_path}: Not a valid JSON file, skipping")
+            print(f"❌ {file_path}: Not a valid JSON file")
+            validation_results.append(False)
             continue
 
         validation_results.append(validate_json_file(path, args.strict))

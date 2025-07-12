@@ -181,7 +181,7 @@ class TestMain:
 
             Path(f1.name).unlink()
 
-        assert result == 0  # Should succeed but skip non-JSON files
+        assert result == 1  # Should fail on invalid JSON files
 
     def test_main_with_json_file_no_extension(self) -> None:
         """Test main function with JSON file without .json extension."""
