@@ -90,6 +90,27 @@ class TestValidateJsonFile:
 
         assert result is False
 
+    def test_schema_property_not_rejected(self) -> None:
+        """Test that $schema property itself is not rejected as additional property."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            # Use a simple schema that doesn't explicitly allow $schema
+            json.dump(
+                {
+                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "type": "object",
+                    "properties": {"name": {"type": "string"}},
+                    "additionalProperties": False,  # This should not reject $schema
+                    "name": "test value",
+                },
+                f,
+            )
+            f.flush()
+
+            result = validate_json_file(Path(f.name))
+            Path(f.name).unlink()
+
+        assert result is True
+
 
 class TestMain:
     """Test the main function."""

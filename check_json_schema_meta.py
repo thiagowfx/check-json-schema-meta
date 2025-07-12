@@ -44,7 +44,10 @@ def validate_json_file(file_path: Path, strict: bool = False) -> bool:
         # Load and validate the schema
         schema_loader = SchemaLoader(schema_ref)
         schema = schema_loader.get_schema()
-        jsonschema.validate(data, schema)
+
+        # Create a copy of data without $schema for validation
+        data_without_schema = {k: v for k, v in data.items() if k != "$schema"}
+        jsonschema.validate(data_without_schema, schema)
 
         print(f"✅ {file_path}: Schema validation passed")
         return True
