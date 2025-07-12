@@ -219,3 +219,25 @@ class TestMain:
             Path(f.name).unlink()
 
         assert result is True
+
+    def test_json_array_non_strict(self) -> None:
+        """Test validation of JSON array in non-strict mode."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump([{"name": "item1"}, {"name": "item2"}], f)
+            f.flush()
+
+            result = validate_json_file(Path(f.name), strict=False)
+            Path(f.name).unlink()
+
+        assert result is True
+
+    def test_json_array_strict(self) -> None:
+        """Test validation of JSON array in strict mode."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump([{"name": "item1"}, {"name": "item2"}], f)
+            f.flush()
+
+            result = validate_json_file(Path(f.name), strict=True)
+            Path(f.name).unlink()
+
+        assert result is False

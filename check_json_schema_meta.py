@@ -25,6 +25,14 @@ def validate_json_file(file_path: Path, strict: bool = False) -> bool:
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
+        # Handle case where JSON is an array instead of an object
+        if isinstance(data, list):
+            if strict:
+                print(f"❌ {file_path}: JSON array does not support '$schema' key")
+                return False
+            else:
+                return True
+
         schema_ref = data.get("$schema")
         if not schema_ref:
             if strict:
