@@ -87,8 +87,9 @@ uv run check-json-schema-meta --strict file1.json file2.json
 ## Development
 
 Run tests:
+
 ```bash
-uv run pytest tests/
+uv run pytest
 ```
 
 ## Requirements
