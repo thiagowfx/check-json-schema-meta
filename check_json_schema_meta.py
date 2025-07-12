@@ -100,8 +100,12 @@ Usage examples:
             validation_results.append(False)
             continue
 
-        if path.suffix.lower() != ".json":
-            print(f"⚠️  {file_path}: Not a JSON file, skipping")
+        # Try to parse as JSON regardless of extension
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                json.load(f)
+        except json.JSONDecodeError:
+            print(f"⚠️  {file_path}: Not a valid JSON file, skipping")
             continue
 
         validation_results.append(validate_json_file(path, args.strict))

@@ -146,6 +146,27 @@ class TestMain:
 
         assert result == 0  # Should succeed but skip non-JSON files
 
+    def test_main_with_json_file_no_extension(self) -> None:
+        """Test main function with JSON file without .json extension."""
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".babelrc", delete=False
+        ) as f1:
+            json.dump(
+                {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "presets": ["@babel/preset-env"],
+                },
+                f1,
+            )
+            f1.flush()
+
+            with patch("sys.argv", ["check_json_schema_meta", f1.name]):
+                result = main()
+
+            Path(f1.name).unlink()
+
+        assert result == 0  # Should succeed and validate the JSON file
+
     def test_main_with_strict_flag(self) -> None:
         """Test main function with --strict flag and missing schema."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f1:
