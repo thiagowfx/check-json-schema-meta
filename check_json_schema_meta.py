@@ -46,7 +46,7 @@ def validate_json_file(file_path: Path, strict: bool = False) -> bool:
         schema = schema_loader.get_schema()
         jsonschema.validate(data, schema)
 
-        print(f"✓ {file_path}: Schema validation passed")
+        print(f"✅ {file_path}: Schema validation passed")
         return True
 
     except json.JSONDecodeError as e:
