@@ -127,6 +127,198 @@ class TestValidateJsonFile:
 
         assert result is True
 
+    def test_schema_store_host_json_with_refs(self) -> None:
+        """Test validation of host.json with schema store schema that contains $ref."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(
+                {
+                    "$schema": "https://www.schemastore.org/schemas/json/host.json",
+                    "version": "2.0",
+                },
+                f,
+            )
+            f.flush()
+
+            result = validate_json_file(Path(f.name))
+            Path(f.name).unlink()
+
+        assert result is True
+
+    def test_schema_store_package_json_with_refs(self) -> None:
+        """Test validation of package.json with schema store schema that contains $ref.
+
+        Uses a real production package.json configuration to test $ref resolution.
+        """
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(
+                {
+                    "$schema": "https://www.schemastore.org/schemas/json/package.json",
+                    "name": "test-package",
+                    "version": "1.0.0",
+                    "description": "A test package for schema validation",
+                    "main": "index.js",
+                    "scripts": {
+                        "test": "echo \"Error: no test specified\" && exit 1"
+                    },
+                    "keywords": ["test"],
+                    "author": "Test Author",
+                    "license": "MIT"
+                },
+                f,
+            )
+            f.flush()
+
+            result = validate_json_file(Path(f.name))
+            Path(f.name).unlink()
+
+        assert result is True
+
+    def test_local_schema_with_refs(self) -> None:
+        """Test validation with local schema that uses $ref to demonstrate ref resolution.
+
+        This test creates two schema files where one references the other via $ref.
+        Without proper $ref resolution, validation would fail.
+        """
+        # Create a definitions schema file
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False
+        ) as def_schema:
+            definitions = {
+                "$schema": "https://json-schema.org/draft/2019-09/schema",
+                "$id": "https://example.com/definitions.json",
+                "definitions": {
+                    "person": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "age": {"type": "integer", "minimum": 0},
+                        },
+                        "required": ["name", "age"],
+                    }
+                },
+            }
+            json.dump(definitions, def_schema)
+            def_schema.flush()
+            def_schema_url = f"file://{def_schema.name}"
+
+            # Create a main schema that references the definitions
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".json", delete=False
+            ) as main_schema:
+                main_schema_data = {
+                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$id": "https://example.com/team.json",
+                    "type": "object",
+                    "properties": {
+                        "team_name": {"type": "string"},
+                        "members": {
+                            "type": "array",
+                            "items": {"$ref": f"{def_schema_url}#/definitions/person"},
+                        },
+                    },
+                    "required": ["team_name", "members"],
+                }
+                json.dump(main_schema_data, main_schema)
+                main_schema.flush()
+                main_schema_url = f"file://{main_schema.name}"
+
+                # Create a test JSON file that should validate against the schema
+                with tempfile.NamedTemporaryFile(
+                    mode="w", suffix=".json", delete=False
+                ) as test_file:
+                    test_data = {
+                        "$schema": main_schema_url,
+                        "team_name": "Development Team",
+                        "members": [
+                            {"name": "Alice", "age": 30},
+                            {"name": "Bob", "age": 25},
+                        ],
+                    }
+                    json.dump(test_data, test_file)
+                    test_file.flush()
+
+                    # This should pass because $ref resolution works
+                    result = validate_json_file(Path(test_file.name))
+                    Path(test_file.name).unlink()
+
+                Path(main_schema.name).unlink()
+            Path(def_schema.name).unlink()
+
+        assert result is True
+
+    def test_local_schema_with_refs_validation_failure(self) -> None:
+        """Test that $ref resolution properly validates and catches errors.
+
+        This test demonstrates that with proper $ref resolution, validation errors
+        in referenced schemas are correctly detected.
+        """
+        # Create a definitions schema file
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False
+        ) as def_schema:
+            definitions = {
+                "$schema": "https://json-schema.org/draft/2019-09/schema",
+                "$id": "https://example.com/definitions.json",
+                "definitions": {
+                    "person": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "age": {"type": "integer", "minimum": 0},
+                        },
+                        "required": ["name", "age"],
+                    }
+                },
+            }
+            json.dump(definitions, def_schema)
+            def_schema.flush()
+            def_schema_url = f"file://{def_schema.name}"
+
+            # Create a main schema that references the definitions
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".json", delete=False
+            ) as main_schema:
+                main_schema_data = {
+                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$id": "https://example.com/team.json",
+                    "type": "object",
+                    "properties": {
+                        "team_name": {"type": "string"},
+                        "members": {
+                            "type": "array",
+                            "items": {"$ref": f"{def_schema_url}#/definitions/person"},
+                        },
+                    },
+                    "required": ["team_name", "members"],
+                }
+                json.dump(main_schema_data, main_schema)
+                main_schema.flush()
+                main_schema_url = f"file://{main_schema.name}"
+
+                # Create a test JSON file with invalid data (missing required field)
+                with tempfile.NamedTemporaryFile(
+                    mode="w", suffix=".json", delete=False
+                ) as test_file:
+                    test_data = {
+                        "$schema": main_schema_url,
+                        "team_name": "Development Team",
+                        "members": [
+                            {"name": "Alice", "age": 30},
+                            {"name": "Bob"},  # Missing required 'age' field
+                        ],
+                    }
+                    json.dump(test_data, test_file)
+                    test_file.flush()
+
+                    # This should fail because of validation error in referenced schema
+                    result = validate_json_file(Path(test_file.name))
+                    Path(test_file.name).unlink()
+
+                Path(main_schema.name).unlink()
+            Path(def_schema.name).unlink()
+
+        assert result is False
+
 
 class TestMain:
     """Test the main function."""

@@ -8,6 +8,7 @@ from pathlib import Path
 
 import jsonschema
 from check_jsonschema.schema_loader import SchemaLoader
+from jsonschema import validators
 
 
 def validate_json_file(file_path: Path, strict: bool = False) -> bool:
@@ -45,9 +46,13 @@ def validate_json_file(file_path: Path, strict: bool = False) -> bool:
         schema_loader = SchemaLoader(schema_ref)
         schema = schema_loader.get_schema()
 
+        # Create a validator that properly handles $ref resolution
+        validator_class = validators.validator_for(schema)
+        validator = validator_class(schema)
+
         # Create a copy of data without $schema for validation
         data_without_schema = {k: v for k, v in data.items() if k != "$schema"}
-        jsonschema.validate(data_without_schema, schema)
+        validator.validate(data_without_schema)
 
         print(f"✅ {file_path}: Schema validation passed")
         return True
