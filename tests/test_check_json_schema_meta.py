@@ -92,22 +92,38 @@ class TestValidateJsonFile:
 
     def test_schema_property_not_rejected(self) -> None:
         """Test that $schema property itself is not rejected as additional property."""
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-            # Use a simple schema that doesn't explicitly allow $schema
-            json.dump(
-                {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
-                    "type": "object",
-                    "properties": {"name": {"type": "string"}},
-                    "additionalProperties": False,  # This should not reject $schema
-                    "name": "test value",
-                },
-                f,
-            )
-            f.flush()
+        # First create a strict schema that doesn't allow additional properties
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False
+        ) as schema_file:
+            schema_data = {
+                "$schema": "https://json-schema.org/draft/2019-09/schema",
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+                "additionalProperties": False,
+            }
+            json.dump(schema_data, schema_file)
+            schema_file.flush()
+            schema_url = f"file://{schema_file.name}"
 
-            result = validate_json_file(Path(f.name))
-            Path(f.name).unlink()
+            # Now create a JSON document that references this strict schema
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".json", delete=False
+            ) as data_file:
+                json.dump(
+                    {
+                        "$schema": schema_url,
+                        "name": "test value",  # Only this property should be allowed
+                    },
+                    data_file,
+                )
+                data_file.flush()
+
+                # This should pass because $schema is excluded from validation
+                result = validate_json_file(Path(data_file.name))
+                Path(data_file.name).unlink()
+
+            Path(schema_file.name).unlink()
 
         assert result is True
 
