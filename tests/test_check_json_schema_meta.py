@@ -172,7 +172,7 @@ class TestValidateJsonFile:
         assert result is True
 
     def test_local_schema_with_refs(self) -> None:
-        """Test validation with local schema that uses $ref to demonstrate ref resolution.
+        """Test validation with local schema using $ref to demonstrate ref resolution.
 
         This test creates two schema files where one references the other via $ref.
         Without proper $ref resolution, validation would fail.
