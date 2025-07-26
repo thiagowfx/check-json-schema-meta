@@ -157,12 +157,10 @@ class TestValidateJsonFile:
                     "version": "1.0.0",
                     "description": "A test package for schema validation",
                     "main": "index.js",
-                    "scripts": {
-                        "test": "echo \"Error: no test specified\" && exit 1"
-                    },
+                    "scripts": {"test": 'echo "Error: no test specified" && exit 1'},
                     "keywords": ["test"],
                     "author": "Test Author",
-                    "license": "MIT"
+                    "license": "MIT",
                 },
                 f,
             )
