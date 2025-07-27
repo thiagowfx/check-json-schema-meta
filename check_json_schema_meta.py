@@ -3,12 +3,12 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
 import jsonschema
 from check_jsonschema.schema_loader import SchemaLoader
-import os
 
 
 def validate_json_file(file_path: Path, strict: bool = False) -> bool:
@@ -40,7 +40,9 @@ def validate_json_file(file_path: Path, strict: bool = False) -> bool:
             schema_ref = os.environ.get("JSON_SCHEMA_URL")
             if not schema_ref:
                 if strict:
-                    print(f"❌ {file_path}: Missing '$schema' key and JSON_SCHEMA_URL environment variable")
+                    print(
+                        f"❌ {file_path}: Missing '$schema' key and JSON_SCHEMA_URL environment variable"
+                    )
                     return False
                 else:
                     return True
