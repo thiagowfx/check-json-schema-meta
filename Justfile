@@ -16,7 +16,8 @@ test:
 # Create a new release
 release version:
 	@sed -i "s/^version = .*/version = \"{{version}}\"/" pyproject.toml
-	@git add pyproject.toml
+	@uv lock
+	@git add pyproject.toml uv.lock
 	@git commit -m "chore: release {{version}}"
 	@git tag "v{{version}}"
 	@echo "Released {{version}}"
