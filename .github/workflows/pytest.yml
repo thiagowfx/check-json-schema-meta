@@ -15,7 +15,7 @@ jobs:
       uses: astral-sh/setup-uv@v1
     - name: Install dependencies
       run: |
-        uv pip install -e .[dev]
+        uv pip install pytest pre-commit check-jsonschema
     - name: Test with pytest
       run: |
         pytest
