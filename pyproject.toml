@@ -18,7 +18,6 @@ check-json-schema-meta = "check_json_schema_meta:main"
 dev-dependencies = [
     "pytest",
     "pre-commit",
-    "git-cliff",
 ]
 
 [tool.bandit]
