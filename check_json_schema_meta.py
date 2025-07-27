@@ -119,7 +119,7 @@ Usage examples:
     parser.add_argument(
         "--expand-env-vars",
         action="store_true",
-        help="Expand environment variables in $schema paths",
+        help="Expand environment variables in $schema paths (default: false)",
     )
     args = parser.parse_args()
 
