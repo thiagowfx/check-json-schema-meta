@@ -13,7 +13,7 @@ lint:
 test:
 	uv run pytest
 
-# Create a new git tag
+# Create a new release
 release version:
 	@sed -i "s/^version = .*/version = \"{{version}}\"/" pyproject.toml
 	@git add pyproject.toml
