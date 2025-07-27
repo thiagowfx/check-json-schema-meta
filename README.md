@@ -10,6 +10,7 @@ A pre-commit hook that validates JSON files contain valid `$schema` references a
 - Loads and validates the referenced JSON Schema (supports both local files and URLs)
 - Validates JSON data against the schema
 - `--strict` flag to make missing `$schema` fail validation
+- `--expand-env-vars` flag to enable environment variable expansion in `$schema` paths (e.g. `"${SCHEMA_DIR}/my-schema.json"`)
 - Exits with non-zero code on errors but checks all files before exiting
 - Integrates with pre-commit hooks
 
@@ -54,10 +55,21 @@ With strict mode enabled:
 ```yaml
 repos:
   - repo: https://github.com/thiagowfx/check-json-schema-meta
-    rev: main  replace with the latest tag
+    rev: main  # replace with the latest tag
     hooks:
       - id: check-json-schema-meta
         args: ['--strict']
+```
+
+With environment variable expansion enabled:
+
+```yaml
+repos:
+  - repo: https://github.com/thiagowfx/check-json-schema-meta
+    rev: main  # replace with the latest tag
+    hooks:
+      - id: check-json-schema-meta
+        args: ['--expand-env-vars']
 ```
 
 Run pre-commit hooks:
@@ -83,6 +95,7 @@ uv run check-json-schema-meta --strict file1.json file2.json
 ### Options
 
 - `--strict`: Make missing `$schema` fail validation. By default, files without `$schema` are gracefully skipped.
+- `--expand-env-vars`: Expand environment variables in `$schema` paths.
 
 ## Development
 
