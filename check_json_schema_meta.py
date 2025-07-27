@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -40,6 +41,9 @@ def validate_json_file(file_path: Path, strict: bool = False) -> bool:
                 return False
             else:
                 return True
+
+        # Expand environment variables in the schema reference
+        schema_ref = os.path.expandvars(schema_ref)
 
         # Load and validate the schema using SchemaLoader's built-in validator
         schema_loader = SchemaLoader(schema_ref)

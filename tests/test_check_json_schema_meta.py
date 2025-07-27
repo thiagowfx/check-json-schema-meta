@@ -62,6 +62,43 @@ class TestValidateJsonFile:
 
         assert result is False
 
+    def test_schema_with_env_vars(self) -> None:
+        """Test validation with schema path containing environment variables."""
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False
+        ) as schema_file:
+            schema_data = {
+                "$schema": "https://json-schema.org/draft/2019-09/schema",
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+                "additionalProperties": False,
+            }
+            json.dump(schema_data, schema_file)
+            schema_file.flush()
+
+            # Set environment variable to the schema's directory
+            schema_dir = str(Path(schema_file.name).parent)
+            schema_filename = str(Path(schema_file.name).name)
+            with patch.dict("os.environ", {"SCHEMA_DIR": schema_dir}):
+                with tempfile.NamedTemporaryFile(
+                    mode="w", suffix=".json", delete=False
+                ) as data_file:
+                    json.dump(
+                        {
+                            "$schema": f"file:///${{SCHEMA_DIR}}/{schema_filename}",
+                            "name": "test value",
+                        },
+                        data_file,
+                    )
+                    data_file.flush()
+
+                    result = validate_json_file(Path(data_file.name))
+                    Path(data_file.name).unlink()
+
+            Path(schema_file.name).unlink()
+
+        assert result is True
+
     def test_invalid_json(self) -> None:
         """Test validation of invalid JSON file."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
