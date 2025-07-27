@@ -12,6 +12,8 @@ A pre-commit hook that validates JSON files contain valid `$schema` references a
 - `--strict` flag to make missing `$schema` fail validation
 - Exits with non-zero code on errors but checks all files before exiting
 - Integrates with pre-commit hooks
+- Supports validating JSON files against a schema specified by the `$schema` key.
+- **NEW:** If the `$schema` key is missing, you can set the `JSON_SCHEMA_URL` environment variable to provide a default schema reference for validation.
 
 ## Installation
 
@@ -68,6 +70,13 @@ pre-commit install
 
 # Run only this specific hook
 pre-commit run [--all-files] check-json-schema-meta
+```
+
+If your JSON files do not include a `$schema` key, you can set the environment variable `JSON_SCHEMA_URL` to specify a default schema to use for validation:
+
+```bash
+export JSON_SCHEMA_URL="https://example.com/your-default-schema.json"
+pre-commit run --all-files
 ```
 
 ### Direct Usage

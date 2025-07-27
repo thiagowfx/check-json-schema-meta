@@ -8,6 +8,7 @@ from pathlib import Path
 
 import jsonschema
 from check_jsonschema.schema_loader import SchemaLoader
+import os
 
 
 def validate_json_file(file_path: Path, strict: bool = False) -> bool:
@@ -35,11 +36,14 @@ def validate_json_file(file_path: Path, strict: bool = False) -> bool:
 
         schema_ref = data.get("$schema")
         if not schema_ref:
-            if strict:
-                print(f"❌ {file_path}: Missing '$schema' key")
-                return False
-            else:
-                return True
+            # Support environment variable as fallback
+            schema_ref = os.environ.get("JSON_SCHEMA_URL")
+            if not schema_ref:
+                if strict:
+                    print(f"❌ {file_path}: Missing '$schema' key and JSON_SCHEMA_URL environment variable")
+                    return False
+                else:
+                    return True
 
         # Load and validate the schema using SchemaLoader's built-in validator
         schema_loader = SchemaLoader(schema_ref)
