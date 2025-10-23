@@ -37,14 +37,14 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
 
-  - repo: https://github.com/psf/black
-    rev: 8a737e727ac5ab2f1d4cf5876720ed276dc8dc4b  # frozen: 25.1.0
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: fe95161893684893d68b1225356702ca71f8d388  # frozen: 25.9.0
     hooks:
       - id: black
         language_version: python3
 
   - repo: https://github.com/pycqa/isort
-    rev: c8ab4a5b21bac924d106e3103dd7c979fdd0f9bc  # frozen: 6.0.1
+    rev: ec0efaee4acfce198521e43caa3029b06cedd64a  # frozen: 6.1.0
     hooks:
       - id: isort
         args: ["--profile", "black"]
@@ -63,20 +63,20 @@ repos:
         args: ['-c', 'pyproject.toml']
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 412de98d50e846f31ea6f4b0ad036f2c24a7a024  # frozen: v1.17.1
+    rev: 9f70dc58c23dfcca1b97af99eaeee3140a807c7e  # frozen: v1.18.2
     hooks:
       - id: mypy
         additional_dependencies: [types-requests]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: db90487f48a9dd992d243ef63c156eaffddeaf28  # frozen: v0.12.11
+    rev: 9c89adb347f6b973f4905a4be0051eb2ecf85dea  # frozen: v0.13.3
     hooks:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 5962e71b72bb9ab6bcf2bd5abc2cad494f1399fc  # frozen: 0.8.14
+    rev: 160473231b1fcfcfe588f0ffc697c42bb966a962  # frozen: 0.8.23
     hooks:
       - id: uv-lock
 
