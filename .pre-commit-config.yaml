@@ -44,7 +44,7 @@ repos:
         language_version: python3
 
   - repo: https://github.com/pycqa/isort
-    rev: ec0efaee4acfce198521e43caa3029b06cedd64a  # frozen: 6.1.0
+    rev: 0a09c783808cfe77bb3269250f663ff733d23302  # frozen: 7.0.0
     hooks:
       - id: isort
         args: ["--profile", "black"]
@@ -69,14 +69,14 @@ repos:
         additional_dependencies: [types-requests]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 9c89adb347f6b973f4905a4be0051eb2ecf85dea  # frozen: v0.13.3
+    rev: aad66557af3b56ba6d4d69cd1b6cba87cef50cbb  # frozen: v0.14.3
     hooks:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 160473231b1fcfcfe588f0ffc697c42bb966a962  # frozen: 0.8.23
+    rev: 6a3b6bf1868b70929458f1d4aa0a08c647b3ad45  # frozen: 0.9.7
     hooks:
       - id: uv-lock
 
