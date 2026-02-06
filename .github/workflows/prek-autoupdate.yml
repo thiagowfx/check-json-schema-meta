@@ -1,0 +1,47 @@
+name: Prek auto-update
+
+on:
+  schedule:
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prek-auto-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install prek
+        uses: j178/prek-action@564dda4cfa5e96aafdc4a5696c4bf7b46baae5ac # v1.1.0
+        with:
+          install-only: true
+
+      - name: Run prek auto-update
+        run: prek auto-update --freeze --jobs "$(nproc)"
+
+      - uses: j178/prek-action@564dda4cfa5e96aafdc4a5696c4bf7b46baae5ac # v1.1.0
+        continue-on-error: true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: bot/prek-autoupdate
+          delete-branch: true
+          title: Auto-update prek hooks
+          commit-message: Auto-update prek hooks
+          body: |
+            Update tool versions in prek configs to latest version.
+          labels: |
+            automated
+            dependencies
