@@ -39,7 +39,7 @@ A pre-commit hook that validates JSON files contain valid `$schema` references a
 One-shot preview (trial):
 
 ```shell
-pre-commit try-repo https://github.com/thiagowfx/check-json-schema-meta check-json-schema-meta --all
+prek try-repo https://github.com/thiagowfx/check-json-schema-meta check-json-schema-meta --all
 ```
 
 Basic configuration in `.pre-commit-config.yaml`:
@@ -74,14 +74,14 @@ repos:
         args: ['--expand-env-vars']
 ```
 
-Run pre-commit hooks:
+Run prek hooks:
 
 ```bash
-# Install pre-commit hooks
-pre-commit install
+# Install prek hooks
+prek install
 
 # Run only this specific hook
-pre-commit run [--all-files] check-json-schema-meta
+prek run [--all-files] check-json-schema-meta
 ```
 
 ### Direct Usage

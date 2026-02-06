@@ -36,12 +36,12 @@ The project uses several formatting and linting tools configured in `pyproject.t
 - **Black**: Code formatting (target Python 3.9+)
 - **isort**: Import sorting (black profile)
 - **Bandit**: Security analysis (excludes tests/, skips B101)
-- **Pre-commit**: Git hooks for code quality
+- **Prek**: Git hooks for code quality
 
-Check the pre-commit configuration and run hooks manually:
+Check the prek configuration and run hooks manually:
 ```bash
-pre-commit install
-pre-commit run --all-files
+prek install
+prek run --all-files
 ```
 
 ## Architecture
